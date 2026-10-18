@@ -8,3 +8,6 @@ functions/lib/
 functions/node_modules/
 .DS_Store
 *.tsbuildinfo
+
+# One-off diagnostic script, recreated as needed
+probe.cjs
