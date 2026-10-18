@@ -29,9 +29,10 @@
 | 보안 규칙 | ✅ 배포됨 |
 | 익명 인증 | ✅ 사용 설정 (실제 UID 발급 확인) |
 | reCAPTCHA Enterprise 키 ID | ✅ `.env.local` |
-| Blaze 플랜 | ⬜ **미확인** |
-| `GEMINI_API_KEY` 시크릿 | ⬜ 미등록 |
-| 함수 · 호스팅 배포 | ⬜ 시크릿 등록 후 |
+| Blaze 플랜 | ✅ 활성 |
+| `GEMINI_API_KEY` 시크릿 | ✅ 등록됨 (Secret Manager) |
+| 함수 배포 | ✅ `extractCard` · `asia-northeast3` · nodejs22 |
+| 호스팅 배포 | ✅ `ypainewcard.web.app` + `newcard-kr-7f3a2.web.app` |
 
 ## 설정 (한 번만)
 
@@ -82,7 +83,9 @@ firebase functions:secrets:set GEMINI_API_KEY
 > 입력이 Google 제품 개선에 사용되고 사람이 검토할 수 있어 명함 앱에 적합하지 않다.
 > 자세한 근거는 [PRIVACY.md](PRIVACY.md).
 
-모델을 바꾸려면 배포 시 `GEMINI_MODEL` 값을 지정한다(기본값 `gemini-2.5-flash`).
+모델은 `functions/.env.newcard-kr-7f3a2`의 `GEMINI_MODEL`로 고정한다(기본값
+`gemini-2.5-flash`). 코드에 기본값이 있어도 비대화형 배포는 값을 추정하지 않고
+거부하므로, 그 파일이 배포의 단일 출처다. 시크릿은 절대 여기에 쓰지 않는다.
 
 ### 6. 프론트엔드 환경변수
 
@@ -125,7 +128,20 @@ npm test               # 에뮬레이터를 띄우고 vitest 실행
 ```bash
 npm run build
 firebase deploy --only firestore:rules,functions   # 백엔드 먼저
-firebase deploy --only hosting
+firebase deploy --only hosting                     # 두 사이트에 동시 배포
+```
+
+호스팅은 `firebase.json`에 사이트 두 개가 같은 설정으로 선언되어 있어, 한 번의
+배포가 두 URL에 같은 릴리스를 올린다. 한쪽만 갱신되어 어긋나는 일이 없다.
+
+비대화형 셸(CI, 에이전트)에서 함수를 배포할 때 걸리는 두 가지:
+
+```bash
+# 1) 코드 분석 단계의 기본 제한시간 10초는 Windows + 콜드 캐시에서 부족하다
+FUNCTIONS_DISCOVERY_TIMEOUT=120 firebase deploy --only functions --non-interactive
+
+# 2) 첫 배포 후 이미지 정리 정책을 걸지 않으면 저장 비용이 계속 누적된다
+firebase functions:artifacts:setpolicy --location asia-northeast3 --days 3 --force
 ```
 
 배포 후 [PRIVACY.md](PRIVACY.md)의 감사 6개 항목을 실행하고 결과를 기록한다.
