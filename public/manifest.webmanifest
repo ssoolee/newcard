@@ -1,0 +1,20 @@
+{
+  "name": "명함 스캐너",
+  "short_name": "명함",
+  "description": "명함을 촬영해 연락처로 저장하거나 공유합니다. 명함 정보는 기기에만 저장됩니다.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

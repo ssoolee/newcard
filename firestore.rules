@@ -1,0 +1,108 @@
+rules_version = '2';
+
+// ===============================================================
+// newcard — Firestore Security Rules
+// ===============================================================
+//
+// PRIVACY INTENT (the overriding requirement of this project):
+// Business-card data belongs to third parties and is NEVER stored
+// server-side. Card fields, images, filenames and raw model responses
+// exist only in the user's own device (IndexedDB). The ONLY data this
+// database holds is daily usage counters used to enforce a 100/day
+// per-user limit.
+//
+// Therefore these rules are deliberately write-free: there is no
+// client write path to any document, and no collection other than
+// `quotas` is reachable at all.
+//
+// NOTE ON THE SERVER PATH: Cloud Functions write the counters with the
+// Admin SDK, which BYPASSES these rules. The guarantee that the server
+// never persists personal data is therefore enforced in the Functions
+// code by assertQuotaShape() in functions/src/quota.ts (it rejects any
+// document containing fields other than `count` and `updatedAt`), not
+// here. These rules cover the client path only.
+//
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: quotas
+// Document ID: two shapes, both server-generated
+//   a) "<uid>_<YYYYMMDD>"     per-user daily counter (date key is KST)
+//   b) "_global_<YYYYMMDD>"   project-wide daily counter (cost guard)
+// Fields (both shapes, exactly these two, never more):
+//   - count:     number    (required) number of cards processed that day
+//   - updatedAt: timestamp (required) last increment time
+//
+// Access:
+//   - Client READ:  only its own "<own uid>_<YYYYMMDD>" document, to
+//                   display remaining quota (e.g. "98 / 100").
+//   - Client READ of "_global_*": DENIED (server-internal).
+//   - Client WRITE: DENIED everywhere, always.
+//   - Everything outside `quotas`: DENIED (default deny).
+//
+// No client-writable collection exists, so no create/update field
+// validator functions are required. If a client-writable collection is
+// ever added, it MUST get a strict isValidX() validator applied to BOTH
+// create and update before being allowed.
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the request carries a signed-in user (anonymous counts).
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // True only for the caller's OWN daily counter document.
+    //
+    // The id must be exactly "<caller uid>_<8 digits>". Two independent
+    // checks are combined on purpose:
+    //   1. an anchored pattern match, and
+    //   2. a pinned total length (uid + "_" + 8 digits).
+    // The length check means a crafted uid cannot widen the pattern, and
+    // it also makes the "_global_<YYYYMMDD>" documents unreachable for
+    // any real uid.
+    function isOwnDailyQuotaDoc(docId) {
+      return isAuthenticated() &&
+             docId.size() == request.auth.uid.size() + 9 &&
+             docId.matches('^' + request.auth.uid + '_[0-9]{8}$');
+    }
+
+    // ===============================================================
+    // quotas — read-only, own document only
+    // ===============================================================
+    match /quotas/{docId} {
+      // Single-document get only. A collection query (list) cannot
+      // satisfy this condition for arbitrary ids and is therefore
+      // rejected; the client must read its one document by exact id.
+      allow read: if isOwnDailyQuotaDoc(docId);
+
+      // Counters are incremented exclusively by Cloud Functions through
+      // the Admin SDK. No client may create, update or delete them, so
+      // a client cannot reset or inflate its own daily allowance.
+      allow write: if false;
+
+      // No subcollections are used under a counter document.
+      match /{subPath=**} {
+        allow read, write: if false;
+      }
+    }
+
+    // ===============================================================
+    // Default deny — everything else
+    // ===============================================================
+    // Explicit so that if a collection is ever added by mistake (or by
+    // a future change), it is not exposed until rules are written for
+    // it on purpose.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
