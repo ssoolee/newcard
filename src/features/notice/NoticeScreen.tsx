@@ -45,8 +45,14 @@ export default function NoticeScreen() {
         <h2>정확히 알려드려야 하는 두 가지</h2>
         <p>
           <strong>1. 글자 인식은 Google Gemini가 수행합니다.</strong> 사진이 인식을 위해
-          Google로 전송됩니다. 유료 서비스로 이용하기 때문에 전송된 내용이 AI 학습에
-          사용되지는 않지만, 명함 사진이 외부 서비스로 전달된다는 사실은 그대로입니다.
+          Google로 전송됩니다. 이 앱은 Gemini API를 <strong>무료 등급</strong>으로
+          이용하며, 무료 등급에서는 전송된 사진과 인식 결과가{" "}
+          <strong>Google의 AI 모델 개선에 사용될 수 있고</strong> 사람이 내용을 검토할
+          수도 있습니다.
+        </p>
+        <p className="warn">
+          명함에 적힌 정보는 본인이 아니라 그 사람의 것입니다. 이 조건을 감수하기 어려운
+          명함은 이 앱으로 촬영하지 마세요.
         </p>
         <p>
           <strong>2. 사진은 저희 서버를 거쳐 갑니다.</strong> 인식을 중계하는 과정에서
