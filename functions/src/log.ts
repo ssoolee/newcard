@@ -30,7 +30,7 @@ export interface SafeLogFields {
   durationMs?: number;
   /** Short machine code, e.g. "quota-exceeded" or "model-INVALID_ARGUMENT". */
   errorCode?: string;
-  /** Model identifier, e.g. "gemini-2.5-flash". */
+  /** Model identifier, e.g. "gemini-3.8-flash". */
   model?: string;
   /** Remaining daily allowance after this call. */
   quotaRemaining?: number;

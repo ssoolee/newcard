@@ -22,7 +22,7 @@ import { hashUid, logSafe, logSafeError, logSafeWarn } from "./log";
  */
 
 const geminiApiKey = defineSecret("GEMINI_API_KEY");
-const geminiModel = defineString("GEMINI_MODEL", { default: "gemini-2.5-flash" });
+const geminiModel = defineString("GEMINI_MODEL", { default: "gemini-3.8-flash" });
 
 /** Client resizes to ~1600px/q0.8, which lands well under this. */
 const MAX_IMAGE_BYTES = 1_500_000;

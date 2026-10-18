@@ -84,7 +84,7 @@ firebase functions:secrets:set GEMINI_API_KEY
 > 자세한 근거는 [PRIVACY.md](PRIVACY.md).
 
 모델은 `functions/.env.newcard-kr-7f3a2`의 `GEMINI_MODEL`로 고정한다(기본값
-`gemini-2.5-flash`). 코드에 기본값이 있어도 비대화형 배포는 값을 추정하지 않고
+`gemini-3.8-flash`). 코드에 기본값이 있어도 비대화형 배포는 값을 추정하지 않고
 거부하므로, 그 파일이 배포의 단일 출처다. 시크릿은 절대 여기에 쓰지 않는다.
 
 ### 6. 프론트엔드 환경변수
