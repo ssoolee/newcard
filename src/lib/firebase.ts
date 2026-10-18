@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { ReCaptchaV3Provider, initializeAppCheck } from "firebase/app-check";
+import { ReCaptchaEnterpriseProvider, initializeAppCheck } from "firebase/app-check";
 import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { doc, getFirestore, onSnapshot } from "firebase/firestore";
@@ -30,9 +30,10 @@ const app = initializeApp(firebaseConfig);
  * limit would be worth very little: anonymous uids are cheap to mint, so bot
  * traffic is the realistic abuse path.
  *
- * reCAPTCHA v3 is the one third-party script this app loads. It is Google's,
- * it is required for App Check on the web, and it never receives card data —
- * but it is a third-party script, and that is disclosed in the notice screen.
+ * reCAPTCHA Enterprise is the one third-party script this app loads. It is
+ * Google's, it is required for App Check on the web, and it never receives
+ * card data — but it is a third-party script, and that is disclosed in the
+ * notice screen.
  */
 if (import.meta.env.DEV) {
   // Lets the emulator accept calls without a real attestation. The production
@@ -43,7 +44,7 @@ if (import.meta.env.DEV) {
 const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 if (recaptchaSiteKey) {
   initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider(recaptchaSiteKey),
+    provider: new ReCaptchaEnterpriseProvider(recaptchaSiteKey),
     isTokenAutoRefreshEnabled: true,
   });
 }

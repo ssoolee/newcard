@@ -16,7 +16,7 @@
 | 인식 AI | Gemini 2.5 Flash | `responseSchema`로 구조화 출력, 추론 예산 0 |
 | 서버 | Cloud Functions v2 (`asia-northeast3`) | Gemini 프록시 + 쿼터 집계 |
 | 저장 | 기기 IndexedDB / Firestore(카운터만) | Cloud Storage 미사용 |
-| 보호 | App Check(reCAPTCHA v3) + 익명 Auth | 전체 일일 상한으로 비용 방어 |
+| 보호 | App Check(reCAPTCHA Enterprise) + 익명 Auth | 전체 일일 상한으로 비용 방어 |
 
 ## 현재 상태
 
@@ -28,7 +28,7 @@
 | Firestore `(default)` | ✅ `asia-northeast3`, PITR 비활성 |
 | 보안 규칙 | ✅ 배포됨 |
 | 익명 인증 | ✅ 사용 설정 (실제 UID 발급 확인) |
-| reCAPTCHA v3 사이트 키 | ✅ `.env.local` |
+| reCAPTCHA Enterprise 키 ID | ✅ `.env.local` |
 | Blaze 플랜 | ⬜ **미확인** |
 | `GEMINI_API_KEY` 시크릿 | ⬜ 미등록 |
 | 함수 · 호스팅 배포 | ⬜ 시크릿 등록 후 |
@@ -65,7 +65,9 @@ Firestore·Auth가 모두 무료 한도 안에 들어온다.
 ### 4. 인증 · App Check
 
 - Authentication → Sign-in method → **익명(Anonymous) 사용 설정**
-- App Check → 웹 앱에 **reCAPTCHA v3** 등록 → 사이트 키 확보
+- App Check → 웹 앱에 **reCAPTCHA Enterprise**(Fraud Defense) 등록 → 키 ID 확보
+  - 키는 Google Cloud 콘솔 → 보안 → reCAPTCHA에서 만든다(웹사이트 / 점수 기반)
+  - Enterprise 키에는 비밀키가 없다. 키 ID 하나가 등록의 전부다.
 - `extractCard` 함수에 App Check **강제(enforce)** 설정
 
 ### 5. Gemini API 키
