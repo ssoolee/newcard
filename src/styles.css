@@ -649,6 +649,15 @@ button.danger {
   border-color: var(--sun);
 }
 
+/*
+ * The hardest warning in the app sits inside the already-amber disclosure
+ * card. Same background would flatten it, so it gets its own surface.
+ */
+.notice section.disclosure .warn {
+  background: var(--surface);
+  border-left: 3px solid var(--sun);
+}
+
 .notice h2 {
   margin: 0 0 8px;
   font-size: 15px;
@@ -666,6 +675,13 @@ button.danger {
 
 .notice p:last-child {
   margin-bottom: 0;
+}
+
+.credit {
+  margin: 2px 0 6px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--muted);
 }
 
 /* ---------- dialog ---------- */

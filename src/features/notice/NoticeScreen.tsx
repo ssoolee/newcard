@@ -87,6 +87,11 @@ export default function NoticeScreen() {
           필요가 없어지면 전체 삭제로 지워 주세요.
         </p>
       </section>
+
+      <p className="credit">
+        <span aria-hidden="true">🛠️ </span>
+        제작 · AI행정앱제작소
+      </p>
     </div>
   );
 }
