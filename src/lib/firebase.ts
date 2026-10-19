@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { ReCaptchaEnterpriseProvider, initializeAppCheck } from "firebase/app-check";
 import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { kstDateKey } from "./date";
 import { DAILY_LIMIT } from "./types";
@@ -50,7 +49,6 @@ if (recaptchaSiteKey) {
 }
 
 const auth = getAuth(app);
-const db = getFirestore(app);
 const functions = getFunctions(app, "asia-northeast3");
 
 /**
@@ -102,26 +100,41 @@ export async function extractCard(
 }
 
 /**
- * Watches this device's remaining daily allowance.
+ * Reads this device's remaining daily allowance.
  *
- * Reads the single counter document the security rules permit. A missing
- * document simply means nothing has been used today.
+ * Deliberately a plain REST read rather than the Firestore SDK. The SDK is by
+ * far the heaviest dependency this app could carry, and the only thing it did
+ * here was show one number; a single GET does the same for about a kilobyte.
+ * The security rules apply to REST exactly as they do to the SDK, so this
+ * reads the one counter document and nothing else.
+ *
+ * The count also comes back on every scan, so the display stays current
+ * without a live subscription. A failure is not fatal: the header falls back
+ * to the full allowance, and the server remains the real enforcement point.
  */
-export function watchRemainingQuota(
-  uid: string,
-  onChange: (remaining: number) => void,
-): () => void {
-  const ref = doc(db, "quotas", `${uid}_${kstDateKey()}`);
-  return onSnapshot(
-    ref,
-    (snap) => {
-      const used = snap.exists() ? Number(snap.get("count") ?? 0) : 0;
-      onChange(Math.max(0, DAILY_LIMIT - (Number.isFinite(used) ? used : 0)));
-    },
-    () => {
-      // A read failure must not block scanning; the server is the real
-      // enforcement point, this display is a courtesy.
-      onChange(DAILY_LIMIT);
-    },
-  );
+export async function fetchRemainingQuota(uid: string): Promise<number> {
+  try {
+    const user = auth.currentUser;
+    if (!user) return DAILY_LIMIT;
+    const token = await user.getIdToken();
+    const path = `quotas/${uid}_${kstDateKey()}`;
+    const url =
+      `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}` +
+      `/databases/(default)/documents/${path}`;
+    const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    // A missing document means nothing has been used today.
+    if (response.status === 404) return DAILY_LIMIT;
+    if (!response.ok) return DAILY_LIMIT;
+    const body: unknown = await response.json();
+    // The server stores count as an integer, so integerValue is what comes
+    // back. doubleValue is read too: a silently wrong "100 left" would be
+    // worse than the extra line.
+    const field = (
+      body as { fields?: { count?: { integerValue?: string; doubleValue?: number } } }
+    )?.fields?.count;
+    const used = Number(field?.integerValue ?? field?.doubleValue ?? 0);
+    return Math.max(0, DAILY_LIMIT - (Number.isFinite(used) ? used : 0));
+  } catch {
+    return DAILY_LIMIT;
+  }
 }

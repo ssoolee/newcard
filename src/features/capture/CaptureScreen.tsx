@@ -10,6 +10,8 @@ import InviteActions from "../invite/InviteActions";
 interface Props {
   remaining: number;
   onSaved: () => void;
+  /** Each scan comes back with the server's own count of what is left. */
+  onQuotaChange: (remaining: number) => void;
 }
 
 function newId(): string {
@@ -29,7 +31,7 @@ function messageFor(err: unknown): string {
   return "인식에 실패했습니다. 다시 시도해 주세요.";
 }
 
-export default function CaptureScreen({ remaining, onSaved }: Props) {
+export default function CaptureScreen({ remaining, onSaved, onQuotaChange }: Props) {
   const [results, setResults] = useState<ScanResult[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -65,7 +67,8 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
       );
       try {
         const prepared = await prepareImage(fileList[i]);
-        const { card } = await extractCard(prepared.base64, prepared.mimeType);
+        const { card, quotaRemaining } = await extractCard(prepared.base64, prepared.mimeType);
+        onQuotaChange(quotaRemaining);
         setResults((prev) =>
           prev.map((r) =>
             r.id === entry.id

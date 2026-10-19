@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
-import { ensureSignedIn, watchRemainingQuota } from "./lib/firebase";
+import { Suspense, lazy, useCallback, useEffect, useState } from "react";
+import { ensureSignedIn, fetchRemainingQuota } from "./lib/firebase";
 import { listCards } from "./lib/db";
 import { DAILY_LIMIT } from "./lib/types";
 import type { SavedCard } from "./lib/types";
 import CaptureScreen from "./features/capture/CaptureScreen";
-import CardListScreen from "./features/list/CardListScreen";
-import NoticeScreen from "./features/notice/NoticeScreen";
+
+// The scan tab is what opens first, so it ships with the app. The other two
+// are fetched the moment they are tapped.
+const CardListScreen = lazy(() => import("./features/list/CardListScreen"));
+const NoticeScreen = lazy(() => import("./features/notice/NoticeScreen"));
 
 type Tab = "scan" | "list" | "notice";
 
@@ -31,9 +34,17 @@ export default function App() {
     };
   }, []);
 
+  // Read once at sign-in. Every scan returns the new count with its result, so
+  // the header stays current without holding a live subscription open.
   useEffect(() => {
     if (!uid) return undefined;
-    return watchRemainingQuota(uid, setRemaining);
+    let cancelled = false;
+    void fetchRemainingQuota(uid).then((left) => {
+      if (!cancelled) setRemaining(left);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [uid]);
 
   const reloadCards = useCallback(() => {
@@ -64,9 +75,17 @@ export default function App() {
       )}
 
       <main>
-        {tab === "scan" && <CaptureScreen remaining={remaining} onSaved={reloadCards} />}
-        {tab === "list" && <CardListScreen cards={cards} onChanged={reloadCards} />}
-        {tab === "notice" && <NoticeScreen />}
+        {tab === "scan" && (
+          <CaptureScreen
+            remaining={remaining}
+            onSaved={reloadCards}
+            onQuotaChange={setRemaining}
+          />
+        )}
+        <Suspense fallback={<p className="screen muted">불러오는 중…</p>}>
+          {tab === "list" && <CardListScreen cards={cards} onChanged={reloadCards} />}
+          {tab === "notice" && <NoticeScreen />}
+        </Suspense>
       </main>
 
       <nav className="tabbar">

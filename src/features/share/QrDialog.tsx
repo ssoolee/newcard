@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import QRCode from "qrcode";
 import { buildVCard } from "../../lib/vcard";
 import type { CardFields } from "../../lib/types";
 
@@ -19,15 +18,27 @@ export default function QrDialog({ card, onClose }: Props) {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    QRCode.toCanvas(canvas, buildVCard(card), {
-      errorCorrectionLevel: "M",
-      margin: 2,
-      width: 280,
-    }).catch(() => {
-      // Happens when the card has so much text that it exceeds QR capacity.
-      setError("내용이 너무 길어 QR로 만들 수 없습니다. 공유 기능을 사용해 주세요.");
-    });
+    if (!canvas) return undefined;
+    let cancelled = false;
+    // The QR encoder is loaded here rather than with the app: most sessions
+    // never open this dialog, and it is dead weight on the first screen.
+    void import("qrcode")
+      .then(({ default: QRCode }) => {
+        if (cancelled) return undefined;
+        return QRCode.toCanvas(canvas, buildVCard(card), {
+          errorCorrectionLevel: "M",
+          margin: 2,
+          width: 280,
+        });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        // Happens when the card has so much text that it exceeds QR capacity.
+        setError("내용이 너무 길어 QR로 만들 수 없습니다. 공유 기능을 사용해 주세요.");
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [card]);
 
   return (
