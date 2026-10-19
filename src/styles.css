@@ -2,32 +2,63 @@
  * Mobile-first, one-handed. Assume a phone held in portrait at a conference:
  * large tap targets, 16px minimum font size on inputs so iOS does not zoom on
  * focus, and nothing that depends on hover.
+ *
+ * The look is deliberately bright and friendly - soft gradients, rounded
+ * corners, a pastel accent per surface. Colour never carries meaning on its
+ * own: every state that matters also says so in words.
  */
 
 :root {
-  --bg: #f7f7f8;
+  --bg: #fff8fc;
+  --blob-1: #ffe1ef;
+  --blob-2: #ddeeff;
   --surface: #ffffff;
-  --border: #e3e4e8;
-  --text: #16181d;
-  --muted: #6b7280;
-  --accent: #2563eb;
-  --danger: #dc2626;
-  --warn-bg: #fff7ed;
-  --warn-text: #9a3412;
-  --radius: 12px;
+  --surface-blur: rgb(255 255 255 / 82%);
+  --border: #f1e6ee;
+  --text: #2d2442;
+  --muted: #897f9d;
+  --accent: #7b5cff;
+  --accent-soft: #f1ecff;
+  --accent-line: #d6caff;
+  --pink: #ff6fae;
+  --mint: #22c9a0;
+  --mint-line: #bfeedf;
+  --sun: #ffc73c;
+  --danger: #f2545b;
+  --warn-bg: #fff4e2;
+  --warn-text: #a65b00;
+  --card-grad: linear-gradient(158deg, #ffffff 0%, #f4efff 100%);
+  --card-grad-2: linear-gradient(158deg, #ffffff 0%, #e9fbf5 100%);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 8px 24px rgb(123 92 255 / 12%);
+  --shadow-soft: 0 3px 12px rgb(123 92 255 / 8%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1115;
-    --surface: #181b21;
-    --border: #2a2e37;
-    --text: #e8eaed;
-    --muted: #9aa0ab;
-    --accent: #60a5fa;
-    --danger: #f87171;
-    --warn-bg: #2a1f14;
-    --warn-text: #fbbf24;
+    --bg: #14111c;
+    --blob-1: #2e1b33;
+    --blob-2: #152536;
+    --surface: #1d1928;
+    --surface-blur: rgb(29 25 40 / 86%);
+    --border: #322c45;
+    --text: #ece9f5;
+    --muted: #a39bb8;
+    --accent: #a78bfa;
+    --accent-soft: #2a2340;
+    --accent-line: #4a3f6e;
+    --pink: #ff8fc0;
+    --mint: #4fd9b6;
+    --mint-line: #2d5a4e;
+    --sun: #ffd76b;
+    --danger: #ff7b80;
+    --warn-bg: #3a2a14;
+    --warn-text: #ffcc7a;
+    --card-grad: linear-gradient(158deg, #221d31 0%, #2a2140 100%);
+    --card-grad-2: linear-gradient(158deg, #1d2a28 0%, #16302b 100%);
+    --shadow: 0 8px 24px rgb(0 0 0 / 35%);
+    --shadow-soft: 0 3px 12px rgb(0 0 0 / 25%);
   }
 }
 
@@ -39,11 +70,15 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
   color: var(--text);
+  background:
+    radial-gradient(760px 420px at 8% -6%, var(--blob-1), transparent 62%),
+    radial-gradient(680px 400px at 98% 6%, var(--blob-2), transparent 64%),
+    var(--bg);
+  background-attachment: fixed;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic",
-    system-ui, sans-serif;
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+    "Malgun Gothic", system-ui, sans-serif;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -64,22 +99,36 @@ body {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--surface);
+  background: var(--surface-blur);
+  backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }
 
 .app-header h1 {
   margin: 0;
-  font-size: 17px;
-  font-weight: 650;
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.title-emoji {
+  font-size: 20px;
 }
 
 .quota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-variant-numeric: tabular-nums;
   font-size: 13px;
-  color: var(--muted);
-  padding: 4px 10px;
-  border: 1px solid var(--border);
+  font-weight: 650;
+  color: var(--accent);
+  padding: 5px 11px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
   border-radius: 999px;
 }
 
@@ -92,7 +141,7 @@ main {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 /* ---------- capture ---------- */
@@ -101,13 +150,19 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 32px 20px;
-  background: var(--surface);
-  border: 2px dashed var(--border);
-  border-radius: var(--radius);
+  gap: 7px;
+  padding: 30px 20px;
+  background: var(--card-grad);
+  border: 2px dashed var(--accent-line);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
   text-align: center;
   cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.capture-button:active {
+  transform: scale(0.985);
 }
 
 .capture-button.disabled {
@@ -119,20 +174,86 @@ main {
   display: none;
 }
 
+/* The gallery picker: same affordance, deliberately quieter than the camera. */
+.capture-secondary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--card-grad-2);
+  border: 1.5px solid var(--mint-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.capture-secondary:active {
+  transform: scale(0.985);
+}
+
+.capture-secondary.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.capture-secondary input {
+  display: none;
+}
+
+.capture-secondary .capture-label {
+  font-size: 15px;
+}
+
+.capture-secondary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .capture-icon {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  font-size: 30px;
-  line-height: 52px;
-  font-weight: 300;
+  background: linear-gradient(140deg, var(--pink), var(--accent));
+  font-size: 29px;
+  line-height: 64px;
+  box-shadow: 0 8px 18px rgb(255 111 174 / 34%);
+  animation: bob 2.8s ease-in-out infinite;
+}
+
+.capture-icon-sm {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(140deg, var(--mint), #4fc3f7);
+  font-size: 20px;
+  line-height: 42px;
+  text-align: center;
+  box-shadow: 0 5px 12px rgb(34 201 160 / 30%);
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capture-icon {
+    animation: none;
+  }
 }
 
 .capture-label {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .capture-hint,
@@ -147,25 +268,42 @@ main {
 
 .progress-line {
   margin: 0;
+  padding: 10px 14px;
   font-size: 14px;
-  color: var(--muted);
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  text-align: center;
 }
 
 .empty-hint {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
+  padding: 22px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
   font-size: 14px;
+  text-align: center;
 }
 
 .empty-hint p {
   margin: 0;
 }
 
+.empty-emoji {
+  font-size: 34px;
+  line-height: 1.1;
+}
+
 .result-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .result-card {
@@ -176,6 +314,7 @@ main {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
   font-size: 14px;
 }
 
@@ -195,7 +334,7 @@ main {
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid var(--border);
+  border: 2px solid var(--accent-line);
   border-top-color: var(--accent);
   border-radius: 50%;
   flex: none;
@@ -221,18 +360,19 @@ main {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .card-preview {
   width: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
 }
 
 .warn {
   margin: 0;
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: 11px 13px;
+  border-radius: var(--radius-sm);
   background: var(--warn-bg);
   color: var(--warn-text);
   font-size: 13px;
@@ -256,6 +396,7 @@ main {
 
 .field-label {
   font-size: 12px;
+  font-weight: 600;
   color: var(--muted);
 }
 
@@ -263,16 +404,24 @@ main {
 .search {
   /* 16px keeps iOS from zooming the viewport when a field is focused. */
   font-size: 16px;
-  padding: 11px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  padding: 11px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
   background: var(--bg);
   color: var(--text);
   width: 100%;
+  font-family: inherit;
+}
+
+.field input:focus,
+.search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .field.flagged input {
-  border-color: var(--warn-text);
+  border-color: var(--sun);
   background: var(--warn-bg);
 }
 
@@ -284,13 +433,19 @@ main {
 button {
   font-size: 15px;
   font-family: inherit;
+  font-weight: 600;
   padding: 12px 14px;
   min-height: 44px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 button:disabled {
@@ -300,10 +455,11 @@ button:disabled {
 
 button.primary {
   flex: 1;
-  background: var(--accent);
-  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--pink), var(--accent));
+  border-color: transparent;
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgb(123 92 255 / 30%);
 }
 
 button.ghost {
@@ -330,7 +486,8 @@ button.danger {
 
 .danger-confirm {
   padding: 14px;
-  border: 1px solid var(--danger);
+  background: var(--surface);
+  border: 1.5px solid var(--danger);
   border-radius: var(--radius);
   font-size: 14px;
 }
@@ -355,6 +512,7 @@ button.danger {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -367,10 +525,57 @@ button.danger {
   gap: 10px;
 }
 
+.list-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/*
+ * A coloured initial, not a photo: the app never stores the card image, so
+ * this is the only portrait it can honestly show.
+ */
+.avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 40px;
+  text-align: center;
+}
+
+.avatar.hue-0 {
+  background: linear-gradient(140deg, #ff8fb1, #ff5f8f);
+}
+
+.avatar.hue-1 {
+  background: linear-gradient(140deg, #9f8bff, #6d4dff);
+}
+
+.avatar.hue-2 {
+  background: linear-gradient(140deg, #4fd1c5, #16a394);
+}
+
+.avatar.hue-3 {
+  background: linear-gradient(140deg, #ffcf5c, #ff9f43);
+}
+
+.avatar.hue-4 {
+  background: linear-gradient(140deg, #68b8ff, #3178f0);
+}
+
+.avatar.hue-5 {
+  background: linear-gradient(140deg, #f49ad6, #c86dd7);
+}
+
 .list-name {
   margin: 0;
   font-size: 16px;
-  font-weight: 650;
+  font-weight: 700;
 }
 
 .list-sub {
@@ -387,6 +592,7 @@ button.danger {
 .list-contact a {
   color: var(--accent);
   text-decoration: none;
+  font-weight: 600;
 }
 
 .icon-button {
@@ -410,8 +616,13 @@ button.danger {
 
 .share-actions button {
   flex: 1;
-  padding: 10px 8px;
-  font-size: 14px;
+  padding: 10px 4px;
+  font-size: 12.5px;
+  /* Three buttons share one narrow row; let them shrink rather than wrap. */
+  white-space: nowrap;
+  background: var(--accent-soft);
+  border-color: transparent;
+  color: var(--accent);
 }
 
 .bulk-actions {
@@ -430,15 +641,21 @@ button.danger {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
 }
 
 .notice section.disclosure {
-  border-color: var(--warn-text);
+  background: var(--warn-bg);
+  border-color: var(--sun);
 }
 
 .notice h2 {
   margin: 0 0 8px;
   font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 7px;
 }
 
 .notice p {
@@ -457,7 +674,8 @@ button.danger {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: rgb(0 0 0 / 55%);
+  background: rgb(45 36 66 / 58%);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -466,7 +684,7 @@ button.danger {
 
 .dialog {
   background: var(--surface);
-  border-radius: var(--radius);
+  border-radius: 22px;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -474,19 +692,20 @@ button.danger {
   gap: 12px;
   max-width: 340px;
   width: 100%;
+  box-shadow: var(--shadow);
 }
 
 .dialog canvas {
   width: 100%;
   max-width: 280px;
   height: auto;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: #fff;
 }
 
 .dialog-title {
   margin: 0;
-  font-weight: 650;
+  font-weight: 700;
 }
 
 .dialog button {
@@ -499,23 +718,47 @@ button.danger {
   position: sticky;
   bottom: 0;
   display: flex;
-  background: var(--surface);
+  gap: 4px;
+  padding: 6px 8px;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom));
+  background: var(--surface-blur);
+  backdrop-filter: blur(14px);
   border-top: 1px solid var(--border);
-  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .tabbar button {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   border: none;
-  border-radius: 0;
+  border-radius: 14px;
   background: none;
   color: var(--muted);
-  font-size: 13px;
-  padding: 12px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 4px;
+  min-height: 0;
+}
+
+.tab-emoji {
+  font-size: 19px;
+  line-height: 1.15;
+  filter: grayscale(0.55);
+  opacity: 0.75;
+  transition:
+    filter 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .tabbar button.active {
   color: var(--accent);
-  font-weight: 650;
-  box-shadow: inset 0 2px 0 var(--accent);
+  font-weight: 750;
+  background: var(--accent-soft);
+}
+
+.tabbar button.active .tab-emoji {
+  filter: none;
+  opacity: 1;
 }

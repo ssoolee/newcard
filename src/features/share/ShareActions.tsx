@@ -33,13 +33,13 @@ export default function ShareActions({ card, compact }: Props) {
     <>
       <div className={`share-actions ${compact ? "compact" : ""}`}>
         <button type="button" onClick={saveToPhone}>
-          내 폰에 저장
+          <span aria-hidden="true">📥 </span>폰에 저장
         </button>
         <button type="button" onClick={() => void shareVCard([card])}>
-          공유
+          <span aria-hidden="true">💬 </span>공유
         </button>
         <button type="button" onClick={() => setQrOpen(true)}>
-          QR
+          <span aria-hidden="true">🔳 </span>QR
         </button>
       </div>
       {qrOpen && <QrDialog card={card} onClose={() => setQrOpen(false)} />}

@@ -45,8 +45,14 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>명함 스캐너</h1>
+        <h1>
+          <span className="title-emoji" aria-hidden="true">
+            💌
+          </span>
+          명함 스캐너
+        </h1>
         <span className="quota" title="한국 시간 자정에 초기화됩니다">
+          <span aria-hidden="true">⚡</span>
           {remaining} / {DAILY_LIMIT}
         </span>
       </header>
@@ -69,6 +75,9 @@ export default function App() {
           className={tab === "scan" ? "active" : ""}
           onClick={() => setTab("scan")}
         >
+          <span className="tab-emoji" aria-hidden="true">
+            📸
+          </span>
           촬영
         </button>
         <button
@@ -76,6 +85,9 @@ export default function App() {
           className={tab === "list" ? "active" : ""}
           onClick={() => setTab("list")}
         >
+          <span className="tab-emoji" aria-hidden="true">
+            🗂️
+          </span>
           내 명함{cards.length > 0 ? ` ${cards.length}` : ""}
         </button>
         <button
@@ -83,6 +95,9 @@ export default function App() {
           className={tab === "notice" ? "active" : ""}
           onClick={() => setTab("notice")}
         >
+          <span className="tab-emoji" aria-hidden="true">
+            🛡️
+          </span>
           안내
         </button>
       </nav>

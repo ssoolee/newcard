@@ -97,7 +97,7 @@ export default function CardEditor({ initial, previewUrl, onSave, onDiscard }: P
           버리기
         </button>
         <button type="submit" className="primary">
-          이 기기에 저장
+          <span aria-hidden="true">💾 </span>이 기기에 저장
         </button>
       </div>
     </form>

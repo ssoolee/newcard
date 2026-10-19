@@ -9,7 +9,10 @@ export default function NoticeScreen() {
   return (
     <div className="screen notice">
       <section>
-        <h2>명함 정보는 이 기기에만 저장됩니다</h2>
+        <h2>
+          <span aria-hidden="true">📱</span>
+          명함 정보는 이 기기에만 저장됩니다
+        </h2>
         <p>
           인식된 명함 데이터는 이 휴대폰 안에만 보관됩니다. 서버에 복사되지 않고, 다른
           기기와 동기화되지도 않습니다.
@@ -21,7 +24,10 @@ export default function NoticeScreen() {
       </section>
 
       <section>
-        <h2>촬영한 사진은 저장되지 않습니다</h2>
+        <h2>
+          <span aria-hidden="true">🫧</span>
+          촬영한 사진은 저장되지 않습니다
+        </h2>
         <p>
           사진은 글자를 읽는 동안에만 사용되고 어디에도 기록되지 않습니다. 업로드용 저장소
           자체를 만들지 않았습니다.
@@ -33,7 +39,10 @@ export default function NoticeScreen() {
       </section>
 
       <section>
-        <h2>서버에 남는 것은 사용 횟수뿐입니다</h2>
+        <h2>
+          <span aria-hidden="true">🔢</span>
+          서버에 남는 것은 사용 횟수뿐입니다
+        </h2>
         <p>
           하루 100건 제한을 지키기 위해 <strong>숫자 하나</strong>만 기록합니다. 이름,
           전화번호, 회사명은 기록되지 않으며 기록에 남길 수 있는 항목 자체가 코드로
@@ -42,7 +51,10 @@ export default function NoticeScreen() {
       </section>
 
       <section className="disclosure">
-        <h2>정확히 알려드려야 하는 두 가지</h2>
+        <h2>
+          <span aria-hidden="true">⚠️</span>
+          정확히 알려드려야 하는 두 가지
+        </h2>
         <p>
           <strong>1. 글자 인식은 Google Gemini가 수행합니다.</strong> 사진이 인식을 위해
           Google로 전송됩니다. 이 앱은 Gemini API를 <strong>무료 등급</strong>으로
@@ -66,7 +78,10 @@ export default function NoticeScreen() {
       </section>
 
       <section>
-        <h2>타인의 개인정보를 다루고 있습니다</h2>
+        <h2>
+          <span aria-hidden="true">🤝</span>
+          타인의 개인정보를 다루고 있습니다
+        </h2>
         <p className="muted">
           명함에 적힌 정보는 그 사람의 개인정보입니다. 받은 목적 범위에서만 사용하고,
           필요가 없어지면 전체 삭제로 지워 주세요.

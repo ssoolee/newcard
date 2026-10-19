@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { extractCard } from "../../lib/firebase";
 import { prepareImage } from "../../lib/image";
 import { saveCard } from "../../lib/db";
@@ -24,13 +24,12 @@ function messageFor(err: unknown): string {
   if (err instanceof Error && err.message === "image-decode-failed") {
     return "이미지를 열 수 없습니다. 다른 사진으로 시도해 주세요.";
   }
-  return "인식에 실패했습니다. 다시 촬영해 주세요.";
+  return "인식에 실패했습니다. 다시 시도해 주세요.";
 }
 
 export default function CaptureScreen({ remaining, onSaved }: Props) {
   const [results, setResults] = useState<ScanResult[]>([]);
   const [busy, setBusy] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   /**
    * Processes the chosen photos one at a time.
@@ -38,8 +37,13 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
    * Sequential on purpose: it keeps per-card progress honest, avoids hitting
    * the model's per-minute limit on a ten-photo import, and means one bad
    * photo cannot take the others down with it.
+   *
+   * Takes the input element rather than its FileList because the camera and
+   * the gallery have separate inputs, and only the one that was actually used
+   * should be reset afterwards.
    */
-  async function handleFiles(files: FileList | null) {
+  async function handleFiles(input: HTMLInputElement) {
+    const files = input.files;
     if (!files || files.length === 0) return;
 
     const queued: ScanResult[] = Array.from(files).map((file) => ({
@@ -78,7 +82,7 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
 
     setBusy(false);
     // Let the same file be picked again after a retry.
-    if (inputRef.current) inputRef.current.value = "";
+    input.value = "";
   }
 
   async function handleSave(resultId: string, fields: CardFields) {
@@ -100,34 +104,60 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
   }
 
   const exhausted = remaining <= 0;
+  const locked = exhausted || busy;
   const pendingCount = results.filter((r) => r.status === "pending" || r.status === "working")
     .length;
 
   return (
     <div className="screen">
-      <label className={`capture-button ${exhausted ? "disabled" : ""}`}>
+      {exhausted && (
+        <p className="warn banner">
+          <span aria-hidden="true">🌙 </span>
+          오늘 사용량을 모두 사용했습니다. 한국 시간 자정에 초기화됩니다.
+        </p>
+      )}
+
+      {/*
+        Two inputs, not one. The camera needs capture="environment", and that
+        same attribute makes a phone skip the gallery entirely — so a single
+        input cannot offer both. The camera hands back one photo at a time;
+        only the gallery gets multiple.
+      */}
+      <label className={`capture-button ${locked ? "disabled" : ""}`}>
         <input
-          ref={inputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          disabled={locked}
+          onChange={(event) => void handleFiles(event.target)}
+        />
+        <span className="capture-icon" aria-hidden="true">
+          📸
+        </span>
+        <span className="capture-label">명함 촬영</span>
+        <span className="capture-hint">카메라로 바로 찍습니다</span>
+      </label>
+
+      <label className={`capture-secondary ${locked ? "disabled" : ""}`}>
+        <input
           type="file"
           accept="image/*"
           multiple
-          capture="environment"
-          disabled={exhausted || busy}
-          onChange={(event) => void handleFiles(event.target.files)}
+          disabled={locked}
+          onChange={(event) => void handleFiles(event.target)}
         />
-        <span className="capture-icon" aria-hidden="true">
-          +
+        <span className="capture-icon-sm" aria-hidden="true">
+          🖼️
         </span>
-        <span className="capture-label">
-          {exhausted ? "오늘 사용량을 모두 사용했습니다" : "명함 촬영 · 사진 불러오기"}
-        </span>
-        <span className="capture-hint">
-          {exhausted ? "한국 시간 자정에 초기화됩니다" : "여러 장을 한 번에 선택할 수 있습니다"}
+        <span className="capture-secondary-text">
+          <span className="capture-label">사진 불러오기</span>
+          <span className="capture-hint">갤러리에서 여러 장을 한 번에 선택</span>
         </span>
       </label>
 
       {pendingCount > 0 && (
         <p className="progress-line" role="status">
+          <span aria-hidden="true">✨ </span>
           인식 중… {results.filter((r) => r.status === "done").length} /{" "}
           {results.length} 완료
         </p>
@@ -135,7 +165,10 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
 
       {results.length === 0 && !exhausted && (
         <div className="empty-hint">
-          <p>촬영하면 바로 인식이 시작됩니다. 버튼을 한 번 더 누를 필요가 없습니다.</p>
+          <span className="empty-emoji" aria-hidden="true">
+            🪄
+          </span>
+          <p>고르면 바로 인식이 시작됩니다. 버튼을 한 번 더 누를 필요가 없습니다.</p>
           <p className="muted">
             인식된 내용은 저장 전에 직접 수정할 수 있습니다. 전화번호와 이메일은 꼭 확인해
             주세요.
@@ -164,7 +197,10 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
           if (result.status === "error") {
             return (
               <div key={result.id} className="result-card error">
-                <p>{result.errorMessage}</p>
+                <p>
+                  <span aria-hidden="true">😥 </span>
+                  {result.errorMessage}
+                </p>
                 <button type="button" onClick={() => handleDiscard(result.id)}>
                   닫기
                 </button>
