@@ -88,10 +88,16 @@ export default function NoticeScreen() {
         </p>
       </section>
 
-      <p className="credit">
-        <span aria-hidden="true">🛠️ </span>
-        제작 · AI행정앱제작소
-      </p>
+      <div className="credit">
+        <p>
+          <span aria-hidden="true">🛠️ </span>
+          제작 · AI행정앱제작소
+        </p>
+        <p>
+          <span aria-hidden="true">✉️ </span>
+          사용법 문의 · <a href="mailto:admin@welflows.com">admin@welflows.com</a>
+        </p>
+      </div>
     </div>
   );
 }
