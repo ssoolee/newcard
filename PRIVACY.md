@@ -126,18 +126,6 @@ Cloud Functions는 Admin SDK로 Firestore에 쓴다. **Admin SDK는 보안 규�
 App Check에 필요한 유일한 서드파티 스크립트다. Google이 제공하며 명함 내용을 받지
 않지만, 서드파티 스크립트라는 사실은 안내 화면에 고지한다.
 
-### 4. 웹폰트는 CDN이 아니라 자체 오리진에서 준다
-
-Pretendard를 쓰지만 Google Fonts나 jsDelivr를 거치지 않는다. 폰트 CDN을 쓰면 앱을 여는
-모든 사람의 IP가 제3자에게 전달되어 감사 항목 6("외부 송신 없음 — reCAPTCHA 외 없음")이
-**조용히 거짓이 된다**. 글꼴은 눈에 보이지 않는 요청이라 더 놓치기 쉽다.
-
-이 선택은 취향이 아니라 구조로 고정되어 있다. CSP의 `font-src 'self'`가 외부 폰트
-오리진을 애초에 차단하므로, 누군가 CDN 링크를 넣으면 글자가 안 바뀌는 게 아니라
-**콘솔에 CSP 위반으로 드러난다**. 파일은 `public/fonts/pretendard/`에 있고, 저자가
-배포한 서브셋을 `url()` 경로만 바꿔 그대로 쓴다(수정하면 OFL상 Reserved Font Name
-"Pretendard"를 쓸 수 없게 된다). 라이선스 원문은 같은 폴더의 `OFL.txt`.
-
 ## 개인정보보호법(PIPA) 대응
 
 Google은 **개인정보 처리위탁 수탁자**에 해당한다. 서비스를 공개할 경우 개인정보

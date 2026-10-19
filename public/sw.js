@@ -39,10 +39,8 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Hashed build assets and the font chunks: both are immutable static files
-  // that carry no personal data, so they are safe to keep. Serve from cache,
-  // fill on first use. These two prefixes are the whole allow-list.
-  if (url.pathname.startsWith("/assets/") || url.pathname.startsWith("/fonts/")) {
+  // Hashed build assets are immutable: serve from cache, fill on first use.
+  if (url.pathname.startsWith("/assets/")) {
     event.respondWith(
       caches.match(request).then(
         (hit) =>

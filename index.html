@@ -20,26 +20,6 @@
     <link rel="apple-touch-icon" href="/icons/icon-512.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
 
-    <!-- Pretendard, served from this origin. A font CDN would leak every
-         visitor's IP to a third party; CSP font-src is 'self' for that reason. -->
-    <link rel="stylesheet" href="/fonts/pretendard.css" />
-    <!-- The chunks holding common Hangul and digits. Fonts need crossorigin
-         on preload even when they are same-origin. -->
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      crossorigin
-      href="/fonts/pretendard/PretendardVariable.subset.91.woff2"
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      crossorigin
-      href="/fonts/pretendard/PretendardVariable.subset.90.woff2"
-    />
-
     <!-- Link previews. Whoever is sent this address sees what the app does
          before opening it; the image is a drawing, never a real card. -->
     <meta property="og:type" content="website" />
