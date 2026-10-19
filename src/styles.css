@@ -27,6 +27,9 @@
   --danger: #f2545b;
   --warn-bg: #fff4e2;
   --warn-text: #a65b00;
+  --hero-card-a: #ffffff;
+  --hero-card-b: #efe9ff;
+  --hero-line: #b9abe8;
   --card-grad: linear-gradient(158deg, #ffffff 0%, #f4efff 100%);
   --card-grad-2: linear-gradient(158deg, #ffffff 0%, #e9fbf5 100%);
   --radius: 18px;
@@ -55,6 +58,9 @@
     --danger: #ff7b80;
     --warn-bg: #3a2a14;
     --warn-text: #ffcc7a;
+    --hero-card-a: #2b2440;
+    --hero-card-b: #37294f;
+    --hero-line: #6d5ca8;
     --card-grad: linear-gradient(158deg, #221d31 0%, #2a2140 100%);
     --card-grad-2: linear-gradient(158deg, #1d2a28 0%, #16302b 100%);
     --shadow: 0 8px 24px rgb(0 0 0 / 35%);
@@ -142,6 +148,133 @@ main {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-art {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+}
+
+.hero-card-a {
+  stop-color: var(--hero-card-a);
+}
+
+.hero-card-b {
+  stop-color: var(--hero-card-b);
+}
+
+.hero-avatar-a {
+  stop-color: var(--pink);
+}
+
+.hero-avatar-b {
+  stop-color: var(--accent);
+}
+
+.hero-beam-core {
+  stop-color: var(--accent);
+  stop-opacity: 0.55;
+}
+
+.hero-beam-edge {
+  stop-color: var(--accent);
+  stop-opacity: 0;
+}
+
+.hero-frame {
+  stroke: var(--accent);
+  opacity: 0.55;
+}
+
+.hero-line rect {
+  fill: var(--hero-line);
+}
+
+.hero-badge rect {
+  fill: var(--accent);
+}
+
+.hero-badge text {
+  fill: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+}
+
+.hero-spark path {
+  fill: var(--sun);
+}
+
+/* The sweep is what says "being read" rather than "a picture of a card". */
+.hero-beam {
+  animation: sweep 2.8s ease-in-out infinite;
+}
+
+@keyframes sweep {
+  0%,
+  100% {
+    transform: translateY(16px);
+  }
+  50% {
+    transform: translateY(94px);
+  }
+}
+
+.hero-spark path {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
+.hero-spark path:nth-child(2) {
+  animation-delay: 0.8s;
+}
+
+.hero-spark path:nth-child(3) {
+  animation-delay: 1.5s;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-beam,
+  .hero-spark path {
+    animation: none;
+  }
+}
+
+.hero-caption {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.hero-caption strong {
+  color: var(--text);
+  font-weight: 700;
 }
 
 /* ---------- capture ---------- */
@@ -348,6 +481,73 @@ main {
   to {
     transform: rotate(360deg);
   }
+}
+
+.hint-line {
+  margin: 0;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ---------- invite ---------- */
+
+.invite {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+
+.invite-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.invite-actions button {
+  flex: 1 1 140px;
+  padding: 11px 10px;
+  font-size: 13.5px;
+  white-space: nowrap;
+  background: var(--accent-soft);
+  border-color: transparent;
+  color: var(--accent);
+}
+
+.invite-done {
+  flex: 1 1 140px;
+  align-self: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--mint);
+}
+
+.invite-hint {
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.invite-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
 }
 
 /* ---------- editor ---------- */

@@ -1,10 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="명함 스캐너">
-  <rect width="512" height="512" rx="96" fill="#111827" />
-  <rect x="104" y="150" width="304" height="196" rx="20" fill="#f9fafb" />
-  <circle cx="176" cy="212" r="28" fill="#2563eb" />
-  <rect x="146" y="256" width="60" height="14" rx="7" fill="#9ca3af" />
-  <rect x="236" y="196" width="134" height="16" rx="8" fill="#374151" />
-  <rect x="236" y="228" width="104" height="12" rx="6" fill="#9ca3af" />
-  <rect x="236" y="256" width="124" height="12" rx="6" fill="#9ca3af" />
-  <rect x="236" y="284" width="84" height="12" rx="6" fill="#9ca3af" />
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6fae" />
+      <stop offset="1" stop-color="#7b5cff" />
+    </linearGradient>
+    <linearGradient id="dot" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff8fc0" />
+      <stop offset="1" stop-color="#7b5cff" />
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="110" fill="url(#bg)" />
+
+  <!-- Viewfinder brackets: the card is being read, not merely displayed. -->
+  <g fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" opacity="0.75">
+    <path d="M96 170 V134 a16 16 0 0 1 16-16 H148" />
+    <path d="M416 170 V134 a16 16 0 0 0-16-16 H364" />
+    <path d="M96 342 V378 a16 16 0 0 0 16 16 H148" />
+    <path d="M416 342 V378 a16 16 0 0 1-16 16 H364" />
+  </g>
+
+  <rect x="128" y="162" width="256" height="188" rx="26" fill="#ffffff" />
+
+  <circle cx="186" cy="218" r="28" fill="url(#dot)" />
+  <rect x="228" y="204" width="118" height="16" rx="8" fill="#4a3f6e" />
+  <rect x="228" y="230" width="80" height="12" rx="6" fill="#b9abe8" />
+  <rect x="156" y="276" width="200" height="13" rx="6.5" fill="#b9abe8" />
+  <rect x="156" y="306" width="148" height="13" rx="6.5" fill="#b9abe8" />
+
+  <!-- The scan line, held mid-sweep. -->
+  <rect x="128" y="258" width="256" height="7" rx="3.5" fill="#7b5cff" opacity="0.9" />
 </svg>

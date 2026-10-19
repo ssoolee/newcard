@@ -4,6 +4,8 @@ import { prepareImage } from "../../lib/image";
 import { saveCard } from "../../lib/db";
 import type { CardFields, ScanResult } from "../../lib/types";
 import CardEditor from "../review/CardEditor";
+import ScanHero from "./ScanHero";
+import InviteActions from "../invite/InviteActions";
 
 interface Props {
   remaining: number;
@@ -117,6 +119,8 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
         </p>
       )}
 
+      {results.length === 0 && !exhausted && <ScanHero />}
+
       {/*
         Two inputs, not one. The camera needs capture="environment", and that
         same attribute makes a phone skip the gallery entirely — so a single
@@ -164,16 +168,13 @@ export default function CaptureScreen({ remaining, onSaved }: Props) {
       )}
 
       {results.length === 0 && !exhausted && (
-        <div className="empty-hint">
-          <span className="empty-emoji" aria-hidden="true">
-            🪄
-          </span>
-          <p>고르면 바로 인식이 시작됩니다. 버튼을 한 번 더 누를 필요가 없습니다.</p>
-          <p className="muted">
-            인식된 내용은 저장 전에 직접 수정할 수 있습니다. 전화번호와 이메일은 꼭 확인해
-            주세요.
+        <>
+          <p className="muted hint-line">
+            고르면 바로 인식이 시작됩니다. 저장 전에 직접 수정할 수 있으니, 전화번호와
+            이메일은 꼭 확인해 주세요.
           </p>
-        </div>
+          <InviteActions />
+        </>
       )}
 
       <div className="result-list">
